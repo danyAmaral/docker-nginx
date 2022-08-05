@@ -9,32 +9,42 @@ const config = {
 };
 const mysql = require('mysql')
 const connection = mysql.createConnection(config)
-
-const sqlCreateTable = "CREATE TABLE IF NOT EXISTS people (id INT NOT NULL  AUTO_INCREMENT, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
-const sqlInsert = `INSERT INTO people(name) values('Dani')`
-
-connection.query(sqlCreateTable)
-connection.query(sqlInsert)
-connection.end()
+connection.connect((error) => {
+    if(error) {
+        console.log(error);
+    }
+    else {
+        const sqlCreateTable = "CREATE TABLE IF NOT EXISTS people (id INT NOT NULL  AUTO_INCREMENT, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
+        const sqlInsert = `INSERT INTO people(name) values('Dani')`
+        
+        connection.query(sqlCreateTable)
+        connection.query(sqlInsert)
+        connection.end()
+    }
+});
 
 function readDb() {
     return new Promise((resolve, reject) => {
         const connection = mysql.createConnection(config)
-        const sqlSelect = `SELECT name FROM people`
-        // connection.query(sqlSelect, (result) => {
-        //     resolve(result);
-        //     connection.end()
-        // })
-        connection.query(
-            sqlSelect, 
-            function(err, rows){                                                
-                if(rows === undefined){
-                    reject(new Error("Error rows is undefined"));
-                }else{
-                    resolve(rows);
-                }
-                connection.end()
-            })
+        connection.connect((error) => {
+            if(error) {
+                console.log(error);
+            }
+            else {
+                const sqlSelect = `SELECT name FROM people`
+        
+                connection.query(
+                    sqlSelect, 
+                    function(err, rows){                                                
+                        if(rows === undefined){
+                            reject(new Error("Error rows is undefined"));
+                        }else{
+                            resolve(rows);
+                        }
+                        connection.end()
+                    })
+            }
+        });
     });
 }
 
