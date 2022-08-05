@@ -1,0 +1,47 @@
+version: '3'
+
+services: 
+
+  app:
+    build: 
+      context: node
+    container_name: app
+    networks: 
+      - dani-network
+    volumes: 
+      - ./node:/usr/src/app
+    tty: true
+    ports: 
+      - "3000:3000"
+    depends_on: 
+       - db
+
+  frontend:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8080:80
+    networks:
+      - dani-network
+    depends_on:
+      - app
+
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      - dani-network
+
+  
+networks: 
+  dani-network:
+    driver: bridge    
