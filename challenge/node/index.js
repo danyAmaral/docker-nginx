@@ -8,20 +8,27 @@ const config = {
     database:'nodedb'
 };
 const mysql = require('mysql')
-const connection = mysql.createConnection(config)
-connection.connect((error) => {
-    if(error) {
-        console.log(error);
-    }
-    else {
-        const sqlCreateTable = "CREATE TABLE IF NOT EXISTS people (id INT NOT NULL  AUTO_INCREMENT, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
-        const sqlInsert = `INSERT INTO people(name) values('Dani')`
-        
-        connection.query(sqlCreateTable)
-        connection.query(sqlInsert)
-        connection.end()
-    }
-});
+
+
+initializeDb();
+
+function initializeDb() {
+    const connection = mysql.createConnection(config);
+    connection.connect((error) => {
+        if (error) {
+            console.log('error');
+        }
+        else {
+            const sqlCreateTable = "CREATE TABLE IF NOT EXISTS people (id INT NOT NULL  AUTO_INCREMENT, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
+            const sqlInsert = `INSERT INTO people(name) values('Dani')`;
+
+            connection.query(sqlCreateTable);
+            connection.query(sqlInsert);
+            connection.end();
+            console.log('Banco inicializado')
+        }
+    });
+}
 
 function readDb() {
     return new Promise((resolve, reject) => {

@@ -2,9 +2,24 @@ version: '3'
 
 services: 
 
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      - dani-network
+
   app:
     build: ./node
     container_name: app
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 60s -wait-retry-interval 5s npm start
     networks: 
       - dani-network
     volumes: 
@@ -26,19 +41,6 @@ services:
     depends_on:
       - app
 
-  db:
-    image: mysql:5.7
-    command: --innodb-use-native-aio=0
-    container_name: db
-    restart: always
-    tty: true
-    volumes: 
-      - ./mysql:/var/lib/mysql
-    environment: 
-      - MYSQL_DATABASE=nodedb
-      - MYSQL_ROOT_PASSWORD=root
-    networks: 
-      - dani-network
 
   
 networks: 
