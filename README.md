@@ -8,4 +8,4 @@
 - Executar **cd ..**
 - Executar docker-compose up
 
-[image info](./images/evidencia.png)
+![](evidencia.png)
